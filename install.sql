@@ -83,8 +83,11 @@ BEGIN
           content::jsonb->'model' as model,
           content::jsonb->'object' as object,
           content::jsonb->'created' as created,
-          content::jsonb->'usage' as usage,
-          content::jsonb->'choices'->0->'text' as result
+          content::jsonb->'usage'->'prompt_tokens' as prompt_tokens,
+          content::jsonb->'usage'->'completion_tokens' as completion_tokens,
+          content::jsonb->'usage'->'total_tokens' as total_tokens,
+          REGEXP_REPLACE(content::jsonb->'choices'->0->>'text', 
+          '^\n\n(.*)', '\1', 'n') as result
   FROM
     http (('POST', 
       'https://api.openai.com/v1/engines/' || coalesce(settings->>'engine', 'text-davinci-003') || '/completions', 
