@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION public.create_completion (
     prompt text, 
     settings_name text DEFAULT 'default'::text, 
     override_settings jsonb DEFAULT '{}'::jsonb)
-  RETURNS text
+  RETURNS jsonb
   LANGUAGE plpgsql
   SECURITY DEFINER -- required in order to read keys in the ai schema
   -- Set a secure search_path: trusted schema(s), then 'pg_temp'.
@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION public.create_completion (
   AS $$
 DECLARE
   settings jsonb;
-  retval json;
+  retval jsonb;
   OPENAI_API_KEY text;
   tempoutput text;
 BEGIN
@@ -77,8 +77,14 @@ BEGIN
   -- set 60 second timeout
   SELECT * into tempoutput from http_set_curlopt('CURLOPT_TIMEOUT_MS', coalesce(settings->>'timeout', '60000'));
 
-  SELECT
-    content INTO retval
+  SELECT to_jsonb(rows) INTO retval FROM (
+  SELECT  status, 
+          content::jsonb->'id' as id,
+          content::jsonb->'model' as model,
+          content::jsonb->'object' as object,
+          content::jsonb->'created' as created,
+          content::jsonb->'usage' as usage,
+          content::jsonb->'choices'->0->'text' as result
   FROM
     http (('POST', 
       'https://api.openai.com/v1/engines/' || coalesce(settings->>'engine', 'text-davinci-003') || '/completions', 
@@ -93,8 +99,9 @@ BEGIN
           'presence_penalty', settings->'presence_penalty', -- 0.0, --0.5,
           'best_of', settings->'best_of' --1
           )::text
-      ));
-  RETURN retval->'choices'->0->'text';
+      ))    
+  ) rows;
+  RETURN retval;
 END;
 $$;
 -- Do not allow this function to be called by public users (or called at all from the client)
