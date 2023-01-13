@@ -17,10 +17,29 @@ VALUES (
     "top_p":1,
     "frequency_penalty":0.0,
     "presence_penalty":0.0,
-    "best_of":1
+    "best_of":1,
+    "timeout": 60000,
+    "engine": "text-davinci-003",
+    "log": "none"
    }'
 );
 */
+CREATE TABLE IF NOT EXISTS ai.log (
+    id uuid primary key default gen_random_uuid(),
+    openai_id text,
+    model text,
+    object text,
+    created int,
+    prompt_tokens int,
+    completion_tokens int,
+    total_tokens int,
+    prompt text,
+    result text,
+    status smallint,
+    user_id text,
+    user_role text
+);
+
 REVOKE ALL ON TABLE ai.settings FROM PUBLIC;
 
 DROP FUNCTION IF EXISTS public.create_completion;
@@ -62,7 +81,8 @@ BEGIN
         "presence_penalty":0.0,
         "best_of":1,
         "timeout":"60000",
-        "engine":"text-davinci-003"
+        "engine":"text-davinci-003",
+        "log": "none"
     }'::jsonb ||
     default_settings::jsonb ||
     override_settings::jsonb
@@ -86,11 +106,17 @@ BEGIN
           content::jsonb->'usage'->'prompt_tokens' as prompt_tokens,
           content::jsonb->'usage'->'completion_tokens' as completion_tokens,
           content::jsonb->'usage'->'total_tokens' as total_tokens,
-          REGEXP_REPLACE(content::jsonb->'choices'->0->>'text', 
-          '^\n\n(.*)', '\1', 'n') as result
+          REGEXP_REPLACE(
+            content::jsonb->'choices'->0->>'text', 
+            '^\n\n(.*)', 
+            '\1', 
+            'n'
+          ) as result
   FROM
     http (('POST', 
-      'https://api.openai.com/v1/engines/' || coalesce(settings->>'engine', 'text-davinci-003') || '/completions', 
+      'https://api.openai.com/v1/engines/' || 
+          coalesce(settings->>'engine', 'text-davinci-003') || 
+          '/completions', 
       ARRAY[http_header ('Authorization', 
       'Bearer ' || OPENAI_API_KEY)], 
       'application/json', 
@@ -104,8 +130,36 @@ BEGIN
           )::text
       ))    
   ) rows;
+  -- Optional logging step: log = 'full' (full logging)
+  if settings->>'log' = 'full' then
+    insert into ai.log(
+      openai_id, model, object, created, 
+      prompt_tokens, completion_tokens, total_tokens,
+      prompt, result, status, user_id, user_role
+    ) values (
+      retval->>'id', retval->>'model', retval->>'object', (retval->'created')::int, 
+      (retval->'prompt_tokens')::int, (retval->'completion_tokens')::int, 
+      (retval->'total_tokens')::int, prompt, retval->>'result', 
+      (retval->'status')::smallint, auth.uid(), current_user
+    );
+  end if;
+  -- Optional logging step: log = 'short' (shorter logging, no prompt or result)
+  if settings->>'log' = 'short' then
+    insert into ai.log(
+      openai_id, model, object, created, 
+      prompt_tokens, completion_tokens, total_tokens,
+      status, user_id, user_role
+    ) values (
+      retval->>'id', retval->>'model', retval->>'object', (retval->'created')::int, 
+      (retval->'prompt_tokens')::int, (retval->'completion_tokens')::int, 
+      (retval->'total_tokens')::int,
+      (retval->'status')::smallint, auth.uid(), current_user
+    );
+  end if;
+  -- end of optional logging steps
   RETURN retval;
 END;
 $$;
 -- Do not allow this function to be called by public users (or called at all from the client)
 REVOKE EXECUTE on function public.create_completion FROM PUBLIC;
+
