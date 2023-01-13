@@ -44,12 +44,12 @@ We may want to just send override settings and not specify a specific **configur
 ### Individual Settings Options
 Here are all the possible options that can be stored in a **configuration set** or can be overridden using the 3rd parameter of the `create_completion` function:
 
-#### timeout
+#### `timeout`
 - **type**: numeric
 - **description**: how much time to allow for a response, in milliseconds
 - **default**: 60000 (one minute)
 
-#### engine
+#### `engine`
 - **type**: text
 - **description**: the name of OpenAI model to use
 - **valid values**: 'text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001'
@@ -57,7 +57,7 @@ Here are all the possible options that can be stored in a **configuration set** 
 - **see**: [OpenAI GPT-3 Models](https://beta.openai.com/docs/models/gpt-3)
 
 
-#### log
+#### `log`
 - **type**: text
 - **description**: this setting controls whether or not the results of the function call are logged to the `ai.log` table, and if so, how much detail is logged
 - **valid values**: 'none', 'full', 'short'
@@ -65,42 +65,42 @@ Here are all the possible options that can be stored in a **configuration set** 
 - **notes**: `full` logging logs every field in the `ai.log` table, `short` logging omits the `prompt` and `result` fields (useful for just accounting purposes to keep track of token usage), `none` does not log anything
 
 
-#### temperature
+#### `temperature`
 - **type**: numeric
 - **description**: What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer.
 - **default**: 1.0
 - **see**: [OpenAI: temperature](https://beta.openai.com/docs/api-reference/completions/create#completions/create-temperature)
 
 
-#### max_tokens
+#### `max_tokens`
 - **type**: numeric
 - **description**: the maximum number of tokens to generate in the completion
 - **default**: 16
 - **see**: [OpenAI: max_tokens](https://beta.openai.com/docs/api-reference/completions/create#completions/create-max_tokens)
 
 
-#### top_p
+#### `top_p`
 - **type**: numeric
 - **description**: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.
 - **default**: 1
 - **see**: [OpenAI: top_p](https://beta.openai.com/docs/api-reference/completions/create#completions/create-top_p)
 
 
-#### frequency_penalty
+#### `frequency_penalty`
 - **type**: numeric
 - **description**: Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
 - **default**: 0
 - **see**: [OpenAI: frequency_penalty](https://beta.openai.com/docs/api-reference/completions/create#completions/create-frequency_penalty)
 
 
-#### presence_penalty
+#### `presence_penalty`
 - **type**: numeric
 - **description**: Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
 - **default**: 0
 - **see**: [OpenAI: presence_penalty](https://beta.openai.com/docs/api-reference/completions/create#completions/create-presence_penalty)
 
 
-#### best_of
+#### `best_of`
 - **type**: numeric
 - **description**: Generates best_of completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed.
 - **default**: 1
