@@ -66,7 +66,15 @@ Total number of [tokens](https://openai.com/api/pricing/) charged to your accoun
 
 result:
 ```
-{"id":"cmpl-6YHjxGMiRmnUtT8l6tj7DpKjGvltS","model":"text-davinci-003","object":"text_completion","result":"I don't get no respect. I asked my wife if she'd go out with me for my birthday and she said, \"No, I don't go out with old men!\"","status":200,"created":1673629361,"total_tokens":51,"prompt_tokens":12,"completion_tokens":39}
+{"id":"cmpl-6YHjxGMiRmnUtT8l6tj7DpKjGvltS",
+"model":"text-davinci-003",
+"object":"text_completion",
+"result":"I don't get no respect. I asked my wife if she'd go out with me for my birthday and she said, \"No, I don't go out with old men!\"",
+"status":200,
+"created":1673629361,
+"total_tokens":51,
+"prompt_tokens":12,
+"completion_tokens":39}
 ```
 
 ## Settings
