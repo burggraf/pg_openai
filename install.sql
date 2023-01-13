@@ -74,8 +74,8 @@ BEGIN
   -- 2. default settings from entry in ai.settings
   -- 3. optional override_settings passed to function
   SELECT 
-    '{  "temperature":0.5,
-        "max_tokens":512,
+    '{  "temperature":1.0,
+        "max_tokens":16,
         "top_p":1,
         "frequency_penalty":0.0,
         "presence_penalty":0.0,
