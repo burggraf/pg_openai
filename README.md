@@ -9,9 +9,23 @@ A PostgreSQL extension for calling the OpenAI artificial intelligence api.
 ## Settings
 Every call to the OpenAI API is managed by a group of settings, conveniently stored as a JSONB object.  To keep things simple, default settings are provided inside the function(s).  You can override these settings with **configuration sets**.  Each **configuration set** is stored as a single row in the `ai.settings` table.  Furthermore you can override any of these **configuration sets** by passing specific values to your function call.
 
-### Examples:
+## Function: `create_completion`
+Sends a [create completion](https://beta.openai.com/docs/api-reference/completions) request to OpenAI.
 
-`create_completion(<prompt (as text)>, <optional configuration set name (as text)>, <optional override object (as json)>)`
+### Parameters
+The `create_completion` function takes up to 3 parameters, 2 of which are optional.
+
+#### prompt (text, required)
+This is the [prompt](https://beta.openai.com/docs/api-reference/completions/create#completions/create-prompt) used to generate a response.  The longer and more descriptive the prompt, the more likely you are to get a desired response.
+
+#### configuration set name (text, optional)
+This is the name of the **configuration set** to be used by the call to the OpenAI API.  **Configuration sets** contain your unique **API Key** along with any default settings to use when making the API call.  If no **configuration set name** is supplied, the function will look for a set named `default` and use that.  **Configuration sets** are stored in the `ai.settings` table.
+
+#### override settings (json, optional)
+A block of `json` settings can be sent in this third parameter.  These settings override anything set in the selected **configuration set**. 
+
+### Examples:
+Below are examples ranging from simply sending a prompt, to including a named **configuration set**, to overriding specific settings for each individual API call.
 
 #### Prompt Only
 `select create_completion('Say "Hello, world."');`
