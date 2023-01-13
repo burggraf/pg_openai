@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS ai.settings (
     openai_api_key text not null,
     default_settings jsonb not null
 );
+-- Uncomment the following block and insert your personal OpenAI API Key to get started
+-- See https://openai.com/api/ to get your API key
 /*
 INSERT INTO ai.settings (name, openai_api_key, default_settings) 
 VALUES (

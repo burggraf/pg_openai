@@ -6,8 +6,18 @@ A PostgreSQL extension for calling the OpenAI artificial intelligence api.
 2.  Run `install.sql` script on your database.
 3.  Make your first OpenAI API call:  `select create_completion('Say "Hello, world."');`
 
-## Settings
-Every call to the OpenAI API is managed by a group of settings, conveniently stored as a JSONB object.  To keep things simple, default settings are provided inside the function(s).  You can override these settings with **configuration sets**.  Each **configuration set** is stored as a single row in the `ai.settings` table.  Furthermore you can override any of these **configuration sets** by passing specific values to your function call.
+## What is this?
+`pg_openai` is a set of PostgreSQL functions that use the [pgsql-http](https://github.com/pramsey/pgsql-http) to make calls directly to the OpenAI GPT-3 API to send prompts to online Artificial Intelligence models and return text results.  These results can be used in your application and can be optionally stored in and used by your database.  
+
+Since it's implemented as PostgreSQL functions, it can be used by of other database functions, database triggers, and can be called using the Supabase client or server-based APIs through `.rpc()` calls.
+
+Logging is available which can keep track of OpenAI `tokens` used by your application.  (`tokens` are the billing mechanism OpenAI uses.  For example, at the time of writing, tokens used by the `text-davinci-003` are billed at USD$0.02 per 1000 tokens.)  You can use this logging data to limit your overall spending with OpenAI, to limit individual users' usage, or even to set up a billing system for your application users based on their usage of the OpenAI system.
+
+## Requirements
+You'll need:
+
+- An account with OpenAI and a private API key which you can obtain by going to [https://openai.com/api/](https://openai.com/api).
+- A Supabase project, or any PostgreSQL database with the [pgsql-http](https://github.com/pramsey/pgsql-http) installed.  Certain special features may not work outside of the Supabase environment, such as logging the currently logged-in user, which uses the `auth.uid()` function to return the id of current user.
 
 ## Function: `create_completion`
 Sends a [create completion](https://beta.openai.com/docs/api-reference/completions) request to OpenAI.
@@ -23,6 +33,14 @@ This is the name of the **configuration set** to be used by the call to the Open
 
 #### override settings (json, optional)
 A block of `json` settings can be sent in this third parameter.  These settings override anything set in the selected **configuration set**. 
+
+## Settings
+Every call to the OpenAI API is managed by a group of settings, conveniently stored as a JSONB object.  To keep things simple, default settings are provided inside the function(s).  You can override these settings with **configuration sets**.  Each **configuration set** is stored as a single row in the `ai.settings` table.  Furthermore you can override any of these **configuration sets** by passing specific values to your function call.
+
+The precendence of settings works like this:
+1. `override settings` sent as the 3rd parameter of the `create_completion` function call are used first.
+2. Settings in the selected (or default) **configuration set** are used if a setting is not provided above.
+3. Hard-coded function default settings are used if a setting is not found in either of the above places.
 
 ### Examples:
 Below are examples ranging from simply sending a prompt, to including a named **configuration set**, to overriding specific settings for each individual API call.
