@@ -74,12 +74,13 @@ Here are all the possible options that can be stored in a **configuration set** 
 - **see**: [OpenAI: temperature](https://beta.openai.com/docs/api-reference/completions/create#completions/create-temperature)
 
 
-`max_tokens`
+
 - **setting**: `max_tokens`
 - **type**: numeric
 - **description**: the maximum number of tokens to generate in the completion
 - **default**: 16
 - **see**: [OpenAI: max_tokens](https://beta.openai.com/docs/api-reference/completions/create#completions/create-max_tokens)
+
 
 
 - **setting**: `top_p`
