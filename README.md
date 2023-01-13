@@ -65,7 +65,7 @@ Total number of [tokens](https://openai.com/api/pricing/) charged to your accoun
 `select create_completion('Tell me a joke in the style of Rodney Dangerfield.')`
 
 result:
-```
+```json
 {"id":"cmpl-6YHjxGMiRmnUtT8l6tj7DpKjGvltS",
 "model":"text-davinci-003",
 "object":"text_completion",
