@@ -164,4 +164,6 @@ END;
 $$;
 -- Do not allow this function to be called by public users (or called at all from the client)
 REVOKE EXECUTE on function public.create_completion FROM PUBLIC;
+REVOKE EXECUTE on function public.create_completion FROM anon;
+REVOKE EXECUTE on function public.create_completion FROM authenticated;
 
