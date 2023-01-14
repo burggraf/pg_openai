@@ -11,6 +11,6 @@ VALUES (
     "best_of":1,
     "timeout": 60000,
     "engine": "text-davinci-003",
-    "log": "none"
+    "log": "short"
    }'
 );

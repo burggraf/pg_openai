@@ -1,38 +1,26 @@
-# create-svelte
+# movie recommendations
+This is a sample app that uses `pg_openai` to generate movie recommendations based on an input list of your favorite movies.
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+- It's written in Svelte / SvelteKit.
+- It uses Supabase Auth to allow users to:
+    - Sign up
+    - Sign in
+    - Change passwords
+- Users can enter a list of favorite movies, click a button, and get a list of recommended movies they might like.
+- Data is written to the `movies` table in the PostgreSQL database.
+- Recommendations are fetched by the PostgreSQL function `public.movie_recommendations()`.
+- Users are limited to using 500 `tokens` per 24 hour period, after which they'll get an error message asking them to "try again tomorrow".
 
-## Creating a project
+## Getting Started
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+1. Create a Supabase project if you don't already have one. 
+2. Set the `VITE_SUPABASE_URL` environment variable to your [Supabase Project URL](https://app.supabase.com/project/_/settings/api).
+3. Set the `VITE_SUPABASE_KEY` environment variable to your [Supabase anon/public key](https://app.supabase.com/project/_/settings/api).
+4. Enter your [OpenAI API Key](https://openai.com/api) in the file [02.setup_api_key.sql](./SQL/02.setup_api_key.sql).
+5. Execute the contents of the following files in the [Supabase Dashboard SQL Editor](https://app.supabase.com/project/_/sql).
+    - [01.install.pg_openai.sql](./SQL/01.install.pg_openai.sql)
+    - [02.setup_api_key.sql](./SQL/02.setup_api_key.sql)
+    - [03.movie_recommendations.sql](./SQL/03.movie_recommendations.sql)
+6. Run the app
+    - Development: `npm run dev`
+    - Production: deploy to Vercel, Netlify, or anywhere you like (don't forget to set the environment variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_KEY`).

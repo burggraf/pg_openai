@@ -38,8 +38,9 @@ CREATE TABLE IF NOT EXISTS ai.log (
     prompt text,
     result text,
     status smallint,
-    user_id text,
-    user_role text
+    user_id uuid,
+    user_role text,
+    inserted timestamptz default now()
 );
 
 REVOKE ALL ON TABLE ai.settings FROM PUBLIC;
